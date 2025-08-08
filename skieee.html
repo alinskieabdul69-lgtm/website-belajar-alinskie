@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Animasi</title>
+    <style>
+        /* Reset dan Font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            overflow: hidden;
+        }
+
+        .calculator {
+            position: relative;
+            width: 320px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .calculator:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 60px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.25) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        .display {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.05) 100%
+            );
+            pointer-events: none;
+        }
+
+        #result {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 20px;
+            text-align: right;
+            font-size: 1.8rem;
+            color: #333;
+            caret-color: transparent;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            position: relative;
+            border: none;
+            outline: none;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 100%
+            );
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        button:hover::before {
+            transform: translateY(0);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button.clear, button.equals {
+            grid-column: span 2;
+        }
+
+        button.clear {
+            background: rgba(255, 99, 71, 0.3);
+            color: white;
+        }
+
+        button.equals {
+            background: rgba(46, 204, 113, 0.3);
+            color: white;
+        }
+
+        button.operator {
+            background: rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .calculator {
+                width: 90%;
+                padding: 15px;
+            }
+            
+            button {
+                height: 50px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <input type="text" id="result" readonly placeholder="0">
+        </div>
+        <div class="buttons">
+            <button onclick="clearDisplay()" class="clear">C</button>
+            <button onclick="deleteLastChar()" class="operator">⌫</button>
+            <button onclick="appendOperator('/')" class="operator">/</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button onclick="appendOperator('*')" class="operator">×</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button onclick="appendOperator('-')" class="operator">-</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button onclick="appendOperator('+')" class="operator">+</button>
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button onclick="calculate()" class="equals">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '';
+        let previousInput = '';
+        let operation = null;
+        let resetScreen = false;
+
+        const result = document.getElementById('result');
+
+        function appendNumber(number) {
+            if (currentInput === '0' || resetScreen) {
+                currentInput = '';
+                resetScreen = false;
+            }
+            currentInput += number;
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (resetScreen) {
+                currentInput = '0';
+                resetScreen = false;
+            }
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+
+        function appendOperator(op) {
+            if (operation !== null) calculate();
+            previousInput = currentInput;
+            operation = op;
+            resetScreen = true;
+        }
+
+        function calculate() {
+            let computation;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            switch (operation) {
+                case '+':
+                    computation = prev + current;
+                    break;
+                case '-':
+                    computation = prev - current;
+                    break;
+                case '*':
+                    computation = prev * current;
+                    break;
+                case '/':
+                    computation = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = computation.toString();
+            operation = null;
+            resetScreen = true;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            updateDisplay();
+        }
+
+        function deleteLastChar() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            result.value = currentInput;
+            
+            // Animasi perubahan display
+            result.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                result.style.transform = 'scale(1)';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
